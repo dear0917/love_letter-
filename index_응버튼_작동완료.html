@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고백데이 ❤️</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{font-family:"Pretendard","Noto Sans KR",Arial,sans-serif;background:#f5dfe5;color:#6d555c}
+.app{width:100%;height:100%;position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:28px;background:linear-gradient(135deg,#ead5dc 0%,#fffdfa 28%,#fffafa 72%,#e8ccd5 100%)}
+.screen.active{display:flex;animation:fade .35s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.card{width:100%;max-width:470px;height:100%;max-height:820px;border-radius:28px;background:rgba(255,255,255,.74);display:flex;align-items:center;justify-content:center;flex-direction:column;position:relative;overflow:hidden}
+.title{color:#a84962;font-size:28px;font-weight:800;margin:12px 0}
+.text{font-size:17px;line-height:1.7;margin:8px 0}
+.hint{font-size:14px;color:#6f6366;margin-top:20px}
+.heart{width:120px;height:120px;border:0;border-radius:50%;background:#cc4c6d;color:#fff;font-size:55px;cursor:pointer;margin:18px 0 2px}
+.heart:active{transform:scale(.94)}
+.click-heart{position:fixed;z-index:999;pointer-events:none;font-size:18px;color:#cc4c6d;animation:heartPop 900ms ease-out forwards;transform:translate(-50%,-50%) scale(.4);text-shadow:0 2px 8px rgba(204,76,109,.18)}
+@keyframes heartPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.15) rotate(var(--r))}}
+.screen.active .card{animation:cardIn .38s ease}
+@keyframes cardIn{from{transform:scale(.985);opacity:.8}to{transform:scale(1);opacity:1}}
+.envelope{width:320px;height:180px;position:relative;background:#edaabd;border-radius:10px;cursor:pointer;box-shadow:0 8px 18px rgba(100,50,65,.10)}
+.envelope:before{content:"";position:absolute;inset:0;background:#e7a0b5;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);border-radius:10px}
+.seal{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:#c94c69;color:white;display:grid;place-items:center;font-size:25px}
+.search{position:absolute;top:14px;left:14px;right:14px;height:42px;border:1px solid rgba(255,255,255,.9);border-radius:22px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:white;font-size:14px;background:rgba(255,255,255,.10)}
+.search b{font-size:24px;font-weight:400}
+.choices{display:flex;gap:18px;margin-top:26px}
+.choice{border:0;border-radius:25px;min-width:108px;padding:14px 22px;font-size:16px;cursor:pointer}
+.yes{background:#cc4c6d;color:white}
+.no{background:#eeeeec;color:#666}
+.bigtext{color:#a84962;font-size:27px;font-weight:800;margin-bottom:25px}
+.bigheart{font-size:92px;line-height:1;margin-bottom:25px}
+.finalheart{font-size:92px;margin-bottom:8px}
+.final{color:#a84962;font-size:30px;font-weight:800}
+.finalnote{font-size:14px;max-width:340px;line-height:1.7;margin-top:22px}
+
+.rain-heart{
+  position:fixed;
+  top:-55px;
+  z-index:2000;
+  pointer-events:none;
+  color:#cc4c6d;
+  opacity:0;
+  font-size:20px;
+  animation:rainDown 2.8s linear forwards;
+  filter:drop-shadow(0 2px 4px rgba(204,76,109,.18));
+}
+@keyframes rainDown{
+  0%{opacity:0;transform:translate3d(0,-40px,0) rotate(0deg) scale(.7)}
+  10%{opacity:.9}
+  100%{opacity:0;transform:translate3d(var(--drift),110vh,0) rotate(var(--rot)) scale(1.05)}
+}
+.choice-wrap{position:relative}
+.choice.locked{pointer-events:none;opacity:.65}
+</style>
+</head>
+<body>
+<div class="app">
+<section class="screen active" id="s1">
+<div class="card">
+<div class="envelope" onclick="go(1,this)"><div class="seal">♥</div></div>
+<div class="title">고백데이 💌</div>
+<div class="hint">오늘은 고백데이야, 눌러서 열어봐 💕</div>
+</div>
+</section>
+
+<section class="screen" id="s2">
+<div class="card">
+<div class="title">오늘은 꼭 말하고 싶었어 💗</div>
+<div class="text">9월 17일, 고백데이라서 그런지<br>오늘은 용기 내서 말해보려고 해</div>
+<button class="heart" onclick="go(2,this)">♥</button>
+<div class="hint">하트를 눌러봐 💕</div>
+</div>
+</section>
+
+<section class="screen" id="s3">
+<div class="card">
+<div class="bigtext">혹시 너도 나 좋아해? 🥺</div>
+<div class="choices">
+<button class="choice yes" type="button" onclick="go(3,this)">응! ❤️</button>
+<button class="choice no" type="button" onclick="nope()">아직은?</button>
+</div>
+<div class="hint">솔직하게 대답해줘... 🙈</div>
+</div>
+</section>
+
+<section class="screen" id="s4">
+<div class="card">
+<div class="bigtext">사실 나도 너를 좋아해 ❤️</div>
+<div class="text">계속 말할까 고민했는데<br>오늘은 진짜 솔직하게 말해볼게</div>
+<button class="heart" onclick="go(4,this)">♥</button>
+<div class="hint">마지막까지 눌러줘 💕</div>
+</div>
+</section>
+
+<section class="screen" id="s5">
+<div class="card">
+<div class="search"><span>관련 콘텐츠를 찾아보세요</span><b>⌕</b></div>
+<div class="text" style="margin-bottom:8px">9월 17일은 고백데이래</div>
+<div class="text" style="margin-top:0">그래서 오늘은 더 이상 숨기기 싫어</div>
+<button class="heart" onclick="go(5,this)">♡</button>
+<div class="hint">마지막으로 한 번만 눌러줘</div>
+</div>
+</section>
+
+<section class="screen" id="s6">
+<div class="card">
+<div class="finalheart">❤️</div>
+<div class="final">나 너 좋아해</div>
+<div class="finalnote">고백데이를 핑계로 말하는 거지만<br>사실 전부터 너를 많이 좋아했어<br><br><strong>나랑 사귈래?</strong> ❤️</div>
+</div>
+</section>
+</div>
+
+<script>
+const screens=document.querySelectorAll(".screen");
+let current=0;
+function go(n,btn){
+  burstHearts(btn, n===5 ? 24 : (n===3 ? 14 : 8));
+  if(n===3 && btn) heartRain(32);
+  current=n;
+  screens.forEach((s,i)=>s.classList.toggle("active",i===n));
+}
+
+function heartRain(count){
+ const width=window.innerWidth;
+ for(let i=0;i<count;i++){
+  const h=document.createElement("span");
+  h.className="rain-heart";
+  h.textContent=Math.random()>.18?"♥":"♡";
+  h.style.left=(10+Math.random()*(width-20))+"px";
+  h.style.fontSize=(14+Math.random()*16)+"px";
+  h.style.animationDuration=(2.3+Math.random()*1.8)+"s";
+  h.style.animationDelay=(Math.random()*.5)+"s";
+  h.style.setProperty("--drift",(Math.random()*180-90)+"px");
+  h.style.setProperty("--rot",(Math.random()*360-180)+"deg");
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),4800);
+ }
+}
+function burstHearts(btn,count){
+ if(!btn) return;
+ const r=btn.getBoundingClientRect();
+ const cx=r.left+r.width/2, cy=r.top+r.height/2;
+ for(let i=0;i<count;i++){
+  const h=document.createElement("span");
+  h.className="click-heart";
+  h.textContent=Math.random()>.22?"♥":"♡";
+  h.style.left=cx+"px"; h.style.top=cy+"px";
+  const angle=Math.random()*Math.PI*2;
+  const d=45+Math.random()*85;
+  h.style.setProperty("--x",Math.cos(angle)*d+"px");
+  h.style.setProperty("--y",Math.sin(angle)*d-25+"px");
+  h.style.setProperty("--r",(Math.random()*70-35)+"deg");
+  h.style.fontSize=(13+Math.random()*13)+"px";
+  h.style.animationDelay=(Math.random()*100)+"ms";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),1100);
+ }
+}
+function nope(){
+ const title=document.querySelector("#s3 .bigtext");
+ title.animate(
+  [{transform:"translateX(-5px)"},{transform:"translateX(5px)"},{transform:"translateX(-3px)"},{transform:"translateX(0)"}],
+  {duration:350}
+ );
+}
+</script>
+</body>
+</html>
